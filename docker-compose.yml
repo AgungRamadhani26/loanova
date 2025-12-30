@@ -10,7 +10,7 @@ services:
       - sqlserver
       - redis
     environment:
-      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=mydb;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=loanova_db;encrypt=true;trustServerCertificate=true
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: ${MSSQL_SA_PASSWORD}
 
