@@ -1,91 +1,47 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  # SQL Server Database
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: loanova_sqlserver_local
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
-      - MSSQL_PID=Developer
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver_data:/var/opt/mssql
-    networks:
-      - loanova_network
-
-
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: loanova_redis_local
-    ports:
-      - "6379:6379"
-    command: redis-server --loglevel warning
-    volumes:
-      - redis_data:/data
-    networks:
-      - loanova_network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  # Redis Insight (Optional - Redis GUI)
-  redisinsight:
-    image: redis/redisinsight:latest
-    container_name: loanova_redis_insight
-    ports:
-      - "5540:5540"
-    depends_on:
-      - redis
-    networks:
-      - loanova_network
-
-  # Spring Boot Application (Optional - jika mau run di Docker)
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: loanova_app_local
-    environment:
-      # Database Configuration
-      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=loanova_db;encrypt=true;trustServerCertificate=true
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=SHOsu2611@
-      
-      # Redis Configuration
-      - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_DATA_REDIS_PORT=6379
-      
-      # JWT Configuration
-      - JWT_SECRET=loanovaSecretKeyForJWTAuthenticationMustBeLongEnoughForHS256Algorithm
-      - JWT_ACCESS_TOKEN_EXPIRATION=900000
-      - JWT_REFRESH_TOKEN_EXPIRATION=604800000
+    build: .
+    container_name: spring-app
     ports:
       - "9091:9091"
     depends_on:
-      sqlserver:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - loanova_network
-    restart: unless-stopped
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:9091/actuator/health || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      - sqlserver
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=mydb;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ${SA_PASSWORD}
 
-networks:
-  loanova_network:
-    driver: bridge
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - backend
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
 
 volumes:
   sqlserver_data:
-  redis_data:
+
+networks:
+  backend:
