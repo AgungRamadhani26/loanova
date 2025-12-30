@@ -24,10 +24,10 @@ import java.util.List;
  * - Spring Security auto return 403 Forbidden kalau role tidak sesuai
  * 
  * Endpoints:
- * - GET    /api/branches       - Get all branches
- * - POST   /api/branches       - Create branch
- * - PUT    /api/branches/{id}  - Update branch
- * - DELETE /api/branches/{id}  - Delete branch
+ * - GET /api/branches - Get all branches
+ * - POST /api/branches - Create branch
+ * - PUT /api/branches/{id} - Update branch
+ * - DELETE /api/branches/{id} - Delete branch
  */
 @RestController
 @RequestMapping("/api/branches")
@@ -35,7 +35,6 @@ import java.util.List;
 public class BranchController {
 
     private final BranchService branchService;
-
 
     /**
      * GET ALL BRANCHES
@@ -52,6 +51,12 @@ public class BranchController {
     @PreAuthorize("hasRole('SUPERADMIN')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<BranchResponse>>> getAllBranches() {
+        List<BranchResponse> branches = branchService.getAllBranches();
+        return ResponseUtil.ok(branches, "Berhasil mengambil daftar cabang");
+    }
+
+    @GetMapping("/public")
+    public ResponseEntity<ApiResponse<List<BranchResponse>>> getAllBranch() {
         List<BranchResponse> branches = branchService.getAllBranches();
         return ResponseUtil.ok(branches, "Berhasil mengambil daftar cabang");
     }
@@ -80,7 +85,7 @@ public class BranchController {
      * Path Variable: Branch ID
      * Request Body: BranchRequest dengan validation
      * 
-     * @param id Branch ID yang mau di-update
+     * @param id      Branch ID yang mau di-update
      * @param request Branch data baru
      * @return Updated branch data
      */
@@ -99,7 +104,8 @@ public class BranchController {
      * Authorization: SUPERADMIN only
      * Path Variable: Branch ID
      * 
-     * Note: Bisa implement soft delete (set deletedAt) atau hard delete (hapus dari DB)
+     * Note: Bisa implement soft delete (set deletedAt) atau hard delete (hapus dari
+     * DB)
      * 
      * @param id Branch ID yang mau di-delete
      * @return Success message
