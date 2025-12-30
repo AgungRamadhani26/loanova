@@ -12,7 +12,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=mydb;encrypt=true;trustServerCertificate=true
       SPRING_DATASOURCE_USERNAME: sa
-      SPRING_DATASOURCE_PASSWORD: ${SA_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: ${MSSQL_SA_PASSWORD}
 
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
