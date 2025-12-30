@@ -1,0 +1,23 @@
+# services:
+#   redis:
+#     image: redis:latest
+#     container_name: redis_cache
+#     ports:
+#       - "6379:6379"
+#     command: redis-server --loglevel warning
+#     networks:
+#       - redis_network
+
+#   redisinsight:
+#     image: redis/redisinsight:latest
+#     container_name: redis_insight
+#     ports:
+#       - "5540:5540"
+#     depends_on:
+#       - redis
+#     networks:
+#       - redis_network
+
+# networks:
+#   redis_network:
+#     driver: bridge

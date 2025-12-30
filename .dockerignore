@@ -23,13 +23,13 @@ target/
 .DS_Store
 Thumbs.db
 
-# Deployment files
-deploy/
-
 # Docker
-docker-compose.yml
+docker-compose*.yml
 Dockerfile
+deploy/
 
 # Documentation
 *.md
 HELP.md
+CACHE_IMPLEMENTATION_GUIDE.md
+DOCS_JWT_AUTHENTICATION.md
